@@ -345,7 +345,7 @@ static UIImage * __backgroundImage = nil;
         __notificationWindow.hidden = NO;
     }
     CGRect bounds = __notificationWindow.bounds;
-    CMNavBarNotificationView * notification = [[CMNavBarNotificationView alloc] initWithFrame:bounds];
+    CMNavBarNotificationView * notification = [[[self class] alloc] initWithFrame:bounds];
     
     notification.textLabel.text = text;
     notification.detailTextLabel.text = detail;
@@ -387,7 +387,7 @@ static UIImage * __backgroundImage = nil;
                                              selector:@selector(showNextNotification)
                                                object:nil];
     
-    [CMNavBarNotificationView showNextNotification];
+    [[self class] showNextNotification];
 }
 
 + (void) showNextNotification
