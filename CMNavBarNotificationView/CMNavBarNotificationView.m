@@ -16,6 +16,7 @@
 #define RADIANS(deg) ((deg) * M_PI / 180.0f)
 
 NSString *kCMNavBarNotificationViewTapReceivedNotification = @"kCMNavBarNotificationViewTapReceivedNotification";
+NSString *kCMNavBarNotificationViewIgnoredReceivedNotification = @"kCMNavBarNotificationViewIgnoredReceivedNotification";
 
 #pragma mark CMNavBarNotificationWindow
 
@@ -180,7 +181,9 @@ static UIImage * __backgroundImage = nil;
 @interface CMNavBarNotificationView ()
 
 @property (nonatomic, copy) CMNotificationSimpleAction tapBlock;
+@property (nonatomic, copy) CMNotificationSimpleAction ignoreBlock;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGestureRecognizer;
+@property (nonatomic,assign) BOOL tapped;
 
 + (void) showNextNotification;
 + (UIImage*) screenImageWithRect:(CGRect)rect;
@@ -273,69 +276,154 @@ static UIImage * __backgroundImage = nil;
         _detailTextLabel.lineBreakMode = UILineBreakModeTailTruncation;
         _detailTextLabel.backgroundColor = [UIColor clearColor];
         [_contentView addSubview:_detailTextLabel];
+		
+		_tapped = NO;
     }
     
     return self;
 }
 
 + (CMNavBarNotificationView *) notifyWithText:(NSString*)text
-                              andDetail:(NSString*)detail
+									   detail:(NSString*)detail
 {
     return [self notifyWithText:text
                          detail:detail
-                    andDuration:2.0f];
+					   duration:2.0f
+					ignoreBlock:nil];
 }
 
 + (CMNavBarNotificationView *) notifyWithText:(NSString*)text
-                                 detail:(NSString*)detail
-                            andDuration:(NSTimeInterval)duration
+									   detail:(NSString*)detail
+									 duration:(NSTimeInterval)duration
 {
     return [self notifyWithText:text
                          detail:detail
                           image:nil
-                    andDuration:duration];
+					   duration:duration
+					ignoreBlock:nil];
 }
 
 + (CMNavBarNotificationView *) notifyWithText:(NSString*)text
-                                 detail:(NSString*)detail
-                                  image:(UIImage*)image
-                            andDuration:(NSTimeInterval)duration
+									   detail:(NSString*)detail
+										image:(UIImage*)image
+									 duration:(NSTimeInterval)duration
 {
     return [self notifyWithText:text
                          detail:detail
                           image:image
                        duration:duration
-                  andTouchBlock:nil];
+					 touchBlock:nil
+					ignoreBlock:nil];
 }
 
 + (CMNavBarNotificationView *) notifyWithText:(NSString*)text
-                                 detail:(NSString*)detail
-                               duration:(NSTimeInterval)duration
-                          andTouchBlock:(CMNotificationSimpleAction)block
+									   detail:(NSString*)detail
+									 duration:(NSTimeInterval)duration
+								   touchBlock:(CMNotificationSimpleAction)block
 {
     return [self notifyWithText:text
                          detail:detail
                           image:nil
                        duration:duration
-                  andTouchBlock:block];
+					 touchBlock:block
+					ignoreBlock:nil];
 }
 
 + (CMNavBarNotificationView *) notifyWithText:(NSString*)text
-                                 detail:(NSString*)detail
-                          andTouchBlock:(CMNotificationSimpleAction)block
+									   detail:(NSString*)detail
+								   touchBlock:(CMNotificationSimpleAction)block
 {
     return [self notifyWithText:text
                          detail:detail
                           image:nil
                        duration:2.0
-                  andTouchBlock:block];
+					 touchBlock:block
+					ignoreBlock:nil];
 }
 
 + (CMNavBarNotificationView *) notifyWithText:(NSString*)text
-                                 detail:(NSString*)detail
-                                  image:(UIImage*)image
-                               duration:(NSTimeInterval)duration
-                          andTouchBlock:(CMNotificationSimpleAction)block
+									   detail:(NSString*)detail
+										image:(UIImage*)image
+									 duration:(NSTimeInterval)duration
+								   touchBlock:(CMNotificationSimpleAction)block
+{
+    return [self notifyWithText:text
+                         detail:detail
+                          image:image
+                       duration:duration
+					 touchBlock:block
+					ignoreBlock:nil];
+}
+
++ (CMNavBarNotificationView *) notifyWithText:(NSString*)text
+									   detail:(NSString*)detail
+								  ignoreBlock:(CMNotificationSimpleAction)ignoreBlock
+{
+    return [self notifyWithText:text
+                         detail:detail
+					   duration:2.0f
+					ignoreBlock:ignoreBlock];
+}
+
++ (CMNavBarNotificationView *) notifyWithText:(NSString*)text
+									   detail:(NSString*)detail
+									 duration:(NSTimeInterval)duration
+								  ignoreBlock:(CMNotificationSimpleAction)ignoreBlock
+{
+    return [self notifyWithText:text
+                         detail:detail
+                          image:nil
+					   duration:duration
+					ignoreBlock:ignoreBlock];
+}
+
++ (CMNavBarNotificationView *) notifyWithText:(NSString*)text
+									   detail:(NSString*)detail
+										image:(UIImage*)image
+									 duration:(NSTimeInterval)duration
+								  ignoreBlock:(CMNotificationSimpleAction)ignoreBlock
+{
+    return [self notifyWithText:text
+                         detail:detail
+                          image:image
+                       duration:duration
+					 touchBlock:nil
+					ignoreBlock:ignoreBlock];
+}
+
++ (CMNavBarNotificationView *) notifyWithText:(NSString*)text
+									   detail:(NSString*)detail
+									 duration:(NSTimeInterval)duration
+								   touchBlock:(CMNotificationSimpleAction)block
+								  ignoreBlock:(CMNotificationSimpleAction)ignoreBlock
+{
+    return [self notifyWithText:text
+                         detail:detail
+                          image:nil
+                       duration:duration
+					 touchBlock:block
+					ignoreBlock:ignoreBlock];
+}
+
++ (CMNavBarNotificationView *) notifyWithText:(NSString*)text
+									   detail:(NSString*)detail
+								   touchBlock:(CMNotificationSimpleAction)block
+								  ignoreBlock:(CMNotificationSimpleAction)ignoreBlock
+{
+    return [self notifyWithText:text
+                         detail:detail
+                          image:nil
+                       duration:2.0
+					 touchBlock:block
+					ignoreBlock:ignoreBlock];
+}
+
++ (CMNavBarNotificationView *) notifyWithText:(NSString*)text
+									   detail:(NSString*)detail
+										image:(UIImage*)image
+									 duration:(NSTimeInterval)duration
+								   touchBlock:(CMNotificationSimpleAction)block
+								  ignoreBlock:(CMNotificationSimpleAction)ignoreBlock
 {
     if (__notificationWindow == nil)
     {
@@ -352,6 +440,7 @@ static UIImage * __backgroundImage = nil;
     notification.imageView.image = image;
     notification.duration = duration;
     notification.tapBlock = block;
+    notification.ignoreBlock = ignoreBlock;
     
     UITapGestureRecognizer *gr = [[UITapGestureRecognizer alloc] initWithTarget:notification
                                                                          action:@selector(handleTap:)];
@@ -370,6 +459,8 @@ static UIImage * __backgroundImage = nil;
 
 - (void) handleTap:(UITapGestureRecognizer *)gestureRecognizer
 {
+	self.tapped = YES;
+	
     if (_tapBlock != nil)
     {
         _tapBlock(self);
@@ -395,10 +486,11 @@ static UIImage * __backgroundImage = nil;
     UIView *viewToRotateOut = nil;
     CGRect frame = __notificationWindow.frame;
     UIImage *screenshot = [self screenImageWithRect:frame];
+	CMNavBarNotificationView* currentNotification = (CMNavBarNotificationView*)__notificationWindow.currentNotification;
     
-    if (__notificationWindow.currentNotification)
+    if (currentNotification)
     {
-        viewToRotateOut = __notificationWindow.currentNotification;
+        viewToRotateOut = currentNotification;
     }
     else
     {
@@ -477,6 +569,23 @@ static UIImage * __backgroundImage = nil;
                          
                           __notificationWindow.backgroundColor = [UIColor clearColor];
                      }];
+	
+	if (currentNotification) {
+		if (!currentNotification.tapped) {
+			if (currentNotification.ignoreBlock != nil)
+			{
+				currentNotification.ignoreBlock(currentNotification);
+			}
+
+			if ([currentNotification.delegate respondsToSelector:@selector(didIgnoreNotification:)])
+			{
+				[currentNotification.delegate didIgnoreNotification:currentNotification];
+			}
+			
+			[[NSNotificationCenter defaultCenter] postNotificationName:kCMNavBarNotificationViewIgnoredReceivedNotification
+																object:currentNotification];
+		}
+	}
 }
 
 + (UIImage *) screenImageWithRect:(CGRect)rect

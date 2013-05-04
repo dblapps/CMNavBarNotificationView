@@ -41,7 +41,7 @@
 
 -(IBAction) enqueueNotification1:(id)sender
 {
-    CMNavBarNotificationView *notification = [CMNavBarNotificationView notifyWithText:@"Hello World!" andDetail:@"This is a test"];
+    CMNavBarNotificationView *notification = [CMNavBarNotificationView notifyWithText:@"Hello World!" detail:@"This is a test"];
     notification.delegate = self;
     [notification setBackgroundColor:[UIColor colorWithRed:0.0 green:1.0 blue:0.0 alpha:1.0]];
 }
@@ -53,7 +53,7 @@
     CMNavBarNotificationView *notification = [CMNavBarNotificationView notifyWithText:@"Moped Dog:"
                                                                                detail:@"I have no idea what I'm doing..."
                                                                                 image:[UIImage imageNamed:@"mopedDog.jpeg"]
-                                                                          andDuration:5.0];
+                                                                          duration:5.0];
     notification.textLabel.textColor = [UIColor redColor];
     notification.textLabel.backgroundColor = [UIColor clearColor];
     notification.detailTextLabel.textColor = [UIColor whiteColor];
@@ -63,11 +63,13 @@
 -(IBAction) enqueueNotification3:(id)sender
 {
     [CMNavBarNotificationView notifyWithText:@"Grumpy wizards"
-                                detail:@"make a toxic brew for the jovial queen"
-                         andTouchBlock:^(CMNavBarNotificationView *notificationView) {
-                             NSLog( @"Received touch for notification with text: %@", notificationView.textLabel.text );
-    }];
-
+									  detail:@"make a toxic brew for the jovial queen"
+								  touchBlock:^(CMNavBarNotificationView *notificationView) {
+									  NSLog( @"Received touch for notification with text: %@", notificationView.textLabel.text );
+								  }
+								 ignoreBlock:^(CMNavBarNotificationView* notificationView) {
+									 NSLog( @"Ignored notification with text: %@", notificationView.textLabel.text );
+								 }];
 }
 
 - (void)didTapOnNotificationView:(CMNavBarNotificationView *)notificationView
@@ -82,6 +84,11 @@
     {
         NSLog( @"Received touch for notification with text: %@", ((CMNavBarNotificationView *)notice.object).textLabel.text );
     }
+}
+
+- (void)didIgnoreNotification:(CMNavBarNotificationView*)notificationView
+{
+    NSLog( @"Ignored notification with text: %@", notificationView.textLabel.text );
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation

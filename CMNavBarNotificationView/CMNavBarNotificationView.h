@@ -11,6 +11,7 @@
 #import <UIKit/UIKit.h>
 
 extern NSString *kCMNavBarNotificationViewTapReceivedNotification;
+extern NSString *kCMNavBarNotificationViewIgnoredReceivedNotification;
 
 typedef void (^CMNotificationSimpleAction)(id);
 @protocol CMNavBarNotificationViewDelegate;
@@ -26,31 +27,64 @@ typedef void (^CMNotificationSimpleAction)(id);
 @property (nonatomic) NSTimeInterval duration;
 
 + (CMNavBarNotificationView *) notifyWithText:(NSString*)text
-                                 detail:(NSString*)detail
-                                  image:(UIImage*)image
-                            andDuration:(NSTimeInterval)duration;
+									   detail:(NSString*)detail
+										image:(UIImage*)image
+									 duration:(NSTimeInterval)duration;
 
 + (CMNavBarNotificationView *) notifyWithText:(NSString*)text
-                                 detail:(NSString*)detail
-                            andDuration:(NSTimeInterval)duration;
+									   detail:(NSString*)detail
+									 duration:(NSTimeInterval)duration;
 
 + (CMNavBarNotificationView *) notifyWithText:(NSString*)text
-                              andDetail:(NSString*)detail;
+									   detail:(NSString*)detail;
 
 + (CMNavBarNotificationView *) notifyWithText:(NSString*)text
-                                 detail:(NSString*)detail
-                                  image:(UIImage*)image
-                               duration:(NSTimeInterval)duration
-                          andTouchBlock:(CMNotificationSimpleAction)block;
+									   detail:(NSString*)detail
+										image:(UIImage*)image
+									 duration:(NSTimeInterval)duration
+								   touchBlock:(CMNotificationSimpleAction)block;
 
 + (CMNavBarNotificationView *) notifyWithText:(NSString*)text
-                                 detail:(NSString*)detail
-                               duration:(NSTimeInterval)duration
-                          andTouchBlock:(CMNotificationSimpleAction)block;
+									   detail:(NSString*)detail
+									 duration:(NSTimeInterval)duration
+								   touchBlock:(CMNotificationSimpleAction)block;
 
 + (CMNavBarNotificationView *) notifyWithText:(NSString*)text
-                                 detail:(NSString*)detail
-                          andTouchBlock:(CMNotificationSimpleAction)block;
+									   detail:(NSString*)detail
+								   touchBlock:(CMNotificationSimpleAction)block;
+
++ (CMNavBarNotificationView *) notifyWithText:(NSString*)text
+									   detail:(NSString*)detail
+										image:(UIImage*)image
+									 duration:(NSTimeInterval)duration
+								  ignoreBlock:(CMNotificationSimpleAction)ignoreBlock;
+
++ (CMNavBarNotificationView *) notifyWithText:(NSString*)text
+									   detail:(NSString*)detail
+									 duration:(NSTimeInterval)duration
+								  ignoreBlock:(CMNotificationSimpleAction)ignoreBlock;
+
++ (CMNavBarNotificationView *) notifyWithText:(NSString*)text
+									   detail:(NSString*)detail
+								  ignoreBlock:(CMNotificationSimpleAction)ignoreBlock;
+
++ (CMNavBarNotificationView *) notifyWithText:(NSString*)text
+									   detail:(NSString*)detail
+										image:(UIImage*)image
+									 duration:(NSTimeInterval)duration
+								   touchBlock:(CMNotificationSimpleAction)block
+								  ignoreBlock:(CMNotificationSimpleAction)ignoreBlock;
+
++ (CMNavBarNotificationView *) notifyWithText:(NSString*)text
+									   detail:(NSString*)detail
+									 duration:(NSTimeInterval)duration
+								   touchBlock:(CMNotificationSimpleAction)block
+								  ignoreBlock:(CMNotificationSimpleAction)ignoreBlock;
+
++ (CMNavBarNotificationView *) notifyWithText:(NSString*)text
+									   detail:(NSString*)detail
+								   touchBlock:(CMNotificationSimpleAction)block
+								  ignoreBlock:(CMNotificationSimpleAction)ignoreBlock;
 
 + (void) setBackgroundImage:(UIImage *)image;
 - (void) setBackgroundColor:(UIColor *)color;
@@ -61,5 +95,6 @@ typedef void (^CMNotificationSimpleAction)(id);
 
 @optional
 - (void)didTapOnNotificationView:(CMNavBarNotificationView *)notificationView;
+- (void)didIgnoreNotification:(CMNavBarNotificationView*)notificationView;
 
 @end
