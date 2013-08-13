@@ -588,6 +588,13 @@ static UIImage * __backgroundImage = nil;
 	}
 }
 
++ (void) resetDuration:(NSTimeInterval)duration;
+{
+	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(showNextNotification) object:nil];
+	[NSObject cancelPreviousPerformRequestsWithTarget:self];
+	[self performSelector:@selector(showNextNotification) withObject:nil afterDelay:duration];
+}
+
 + (UIImage *) screenImageWithRect:(CGRect)rect
 {
     CALayer *layer = [[UIApplication sharedApplication] keyWindow].layer;

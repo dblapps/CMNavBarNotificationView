@@ -89,6 +89,8 @@ typedef void (^CMNotificationSimpleAction)(id);
 + (void) setBackgroundImage:(UIImage *)image;
 - (void) setBackgroundColor:(UIColor *)color;
 
++ (void) resetDuration:(NSTimeInterval)duration;
+
 @end
 
 @protocol CMNavBarNotificationViewDelegate <NSObject>
