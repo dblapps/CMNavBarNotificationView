@@ -553,6 +553,8 @@ static UIImage * __backgroundImage = nil;
                          if ([viewToRotateIn isKindOfClass:[CMNavBarNotificationView class]])
                          {
                              CMNavBarNotificationView *notification = (CMNavBarNotificationView*)viewToRotateIn;
+							 [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(showNextNotification) object:nil];
+							 [NSObject cancelPreviousPerformRequestsWithTarget:self];
                              [self performSelector:@selector(showNextNotification)
                                         withObject:nil
                                         afterDelay:notification.duration];
